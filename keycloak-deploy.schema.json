@@ -43,7 +43,6 @@
         },
         "type": {
           "type": "string",
-          "oneOf": ["oidc", "saml"],
           "description": ""
         },
         "realm": {
