@@ -1,0 +1,210 @@
+{
+  "$id": "https://elmsln.org/keycloak-deploy.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Keycloak Client Deployment",
+  "type": "object",
+  "properties": {
+    "keycloak": { "$ref": "#/$defs/keycloak" },
+    "client": { "$ref": "#/$defs/client" },
+    "roles": {
+      "type": "array",
+      "description": "",
+      "items": { "$ref": "#/$defs/role" }
+    }
+  },
+  "required": ["keycloak", "client"],
+  "$defs": {
+    "keycloak": {
+      "type": "object",
+      "description": "",
+      "properties": {
+        "hostname": {
+          "type": "string",
+          "description": ""
+        },
+        "api-key": {
+          "type": "string",
+          "description": ""
+        }
+      },
+      "required": ["hostname", "api-key"]
+    },
+    "client": {
+      "type": "object",
+      "description": "",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": ""
+        },
+        "id": {
+          "type": "string",
+          "description": ""
+        },
+        "type": {
+          "type": "string",
+          "oneOf": ["oidc", "saml"],
+          "description": ""
+        },
+        "realm": {
+          "type": "string",
+          "description": ""
+        },
+        "description": {
+          "type": "string",
+          "description": ""
+        },
+        "redirect-urls": {
+          "type": "array",
+          "description": ""
+        },
+        "oidc": { "$ref": "#/$defs/oidc" },
+        "access": { "$ref": "#/$defs/access" },
+        "login": { "$ref": "#/$defs/login" },
+        "logout": { "$ref": "#/$defs/logout" },
+        "scopes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/scope" },
+          "description": ""
+        }
+      },
+      "required": ["id", "type", "realm"]
+    },
+    "oidc": {
+      "type": "object",
+      "description": "",
+      "properties": {
+        "client-authentication": {
+          "type": "boolean",
+          "description": ""
+        },
+        "authorization": {
+          "type": "boolean",
+          "description": ""
+        },
+        "authentication-flow": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": ""
+        }
+      }
+    },
+    "access": {
+      "type": "object",
+      "description": "",
+      "properties": {
+        "root-url": {
+          "type": "string",
+          "description": ""
+        },
+        "home-url": {
+          "type": "string",
+          "description": ""
+        },
+        "redirect-uris": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": ""
+        },
+        "logout-redirect-uris": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": ""
+        },
+        "web-origins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": ""
+        },
+        "admin-url": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    },
+    "login": {
+      "type": "object",
+      "description": "",
+      "properties": {
+        "theme": {
+          "type": "string",
+          "description": ""
+        },
+        "consent": {
+          "type": "boolean",
+          "description": ""
+        },
+        "display-client": {
+          "type": "boolean",
+          "description": ""
+        },
+        "consent-text": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    },
+    "logout": {
+      "type": "object",
+      "description": "",
+      "properties": {
+        "front-channel": {
+          "type": "boolean",
+          "description": ""
+        },
+        "front-channel-url": {
+          "type": "string",
+          "description": ""
+        },
+        "back-channel-url": {
+          "type": "string",
+          "description": ""
+        },
+        "back-channel-session": {
+          "type": "boolean",
+          "description": ""
+        },
+        "back-channel-revoke": {
+          "type": "boolean",
+          "description": ""
+        }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "description": "",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": ""
+        },
+        "assigned-type": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    },
+    "role": {
+      "type": "object",
+      "description": "",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": ""
+        },
+        "description": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    }
+  }
+}
