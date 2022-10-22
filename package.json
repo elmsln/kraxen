@@ -1,0 +1,18 @@
+{
+  "name": "kraxen",
+  "version": "1.0.0",
+  "description": "Keycloak client deployment engine",
+  "main": "index.js",
+  "scripts": {
+    "start": "",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "ajv": "^8.11.0",
+    "node-fetch": "^3.2.10",
+    "yaml": "^2.1.3"
+  }
+}
