@@ -61,8 +61,12 @@ export class Keycloak {
         const httpMethod = 'GET'
 
         let res = await fetch(endpointUrl, {method: httpMethod, headers: {"Authorization": `bearer ${token}`}})
+        if (!res.ok){
+            let message = await res.text()
+            throw new Error('Could not complete keycloak request: ' + message)
+        }
         let data = await res.json()
-        return data
+        return data 
     }
 
     // Need to add error handling for when items are not found
@@ -73,6 +77,10 @@ export class Keycloak {
         const httpMethod = 'GET'
 
         let res = await fetch(endpointUrl, {method: httpMethod, headers: {"Authorization": `bearer ${token}`}})
+        if (!res.ok){
+            let message = await res.text()
+            throw new Error('Could not complete keycloak request: ' + message)
+        }
         let data = await res.json()
         return data
     }
@@ -85,7 +93,12 @@ export class Keycloak {
         const formBody = this.#encodeBody(clientConfiguration)
 
         let res = await fetch(endpointUrl, {method: httpMethod, headers: {"Authorization": `bearer ${token}`, "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"}, body: formBody})
+        if (!res.ok){
+            let message = await res.text()
+            throw new Error('Could not complete keycloak request: ' + message)
+        }
         let data = await res.json()
+        //return data
         console.log(data)
     }
 
@@ -97,7 +110,12 @@ export class Keycloak {
         const formBody = this.#encodeBody(clientConfiguration)
 
         let res = await fetch(endpointUrl, {method: httpMethod, headers: {"Authorization": `bearer ${token}`, "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"}, body: formBody})
+        if (!res.ok){
+            let message = await res.text()
+            throw new Error('Could not complete keycloak request: ' + message)
+        }
         let data = await res.json()
+        //return data
         console.log(data)
     }
 
