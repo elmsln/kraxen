@@ -50,6 +50,10 @@ export class Keycloak {
         const httpMethod = 'GET'
 
         let res = await fetch(endpointUrl, {method: httpMethod, headers: {"Authorization": `bearer ${token}`}})
+        if (!res.ok){
+            let message = await res.text()
+            throw new Error('Could not complete keycloak request: ' + message)
+        }
         let data = await res.json()
         return data
     }
@@ -60,7 +64,7 @@ export class Keycloak {
         const endpointUrl = `https://${this.#keycloakHost}/admin/realms/${this.#keycloakRealm}/clients/`
         const httpMethod = 'GET'
 
-        let res = await fetch(endpointUrl, {method: httpMethod, headers: {"Authorization": `bearer ${token}`}})
+        let res = await fetch(endpointUrl, {method: httpMethod, headers: {"Authorization": `bearer ${token}`}})        
         if (!res.ok){
             let message = await res.text()
             throw new Error('Could not complete keycloak request: ' + message)
@@ -136,10 +140,16 @@ export class Keycloak {
         if (this.#keycloakToken) {
             return this.#keycloakToken
         }
-        let tokenResponse = await this.#getToken(this.#keycloakAdminUsername, this.#keycloakAdminPassword, this.#keycloakHost)
-        this.#keycloakToken = tokenResponse.access_token
-        this.#keycloakRefreshToken = tokenResponse.refresh_token
-        return tokenResponse.access_token
+        try {
+            let tokenResponse = await this.#getToken(this.#keycloakAdminUsername, this.#keycloakAdminPassword, this.#keycloakHost)
+            this.#keycloakToken = tokenResponse.access_token
+            this.#keycloakRefreshToken = tokenResponse.refresh_token
+            return tokenResponse.access_token
+        } catch (error) {
+            console.error("ERROR: Could not authenticate keycloak client")
+            process.exit(1)
+        }
+        
     }
 
     // https://stackoverflow.com/questions/53283281/how-to-activate-the-rest-api-of-keycloak
@@ -156,6 +166,10 @@ export class Keycloak {
         let formBody = this.#encodeBody(reqData)
 
         let res = await fetch(endpointUrl, {method: httpMethod, headers: {"Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"}, body: formBody})
+        if (!res.ok){
+            let message = await res.text()
+            throw new Error('Could not complete keycloak authentication request: ' + message)
+        }
         let data = await res.json()
         return data
     }
@@ -173,6 +187,10 @@ export class Keycloak {
         let formBody = this.#encodeBody(reqData)
 
         let res = await fetch(endpointUrl, {method: httpMethod, headers: {"Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"}, body: formBody})
+        if (!res.ok){
+            let message = await res.text()
+            throw new Error('Could not complete keycloak authentication request: ' + message)
+        }
         let data = await res.json()
         this.#keycloakToken = data.access_token
         return data.access_token
