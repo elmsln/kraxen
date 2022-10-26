@@ -9,9 +9,9 @@
   },
   "author": "",
   "license": "ISC",
-  "type": "module",
   "dependencies": {
     "ajv": "^8.11.0",
+    "argparse": "^2.0.1",
     "node-fetch": "^3.2.10",
     "yaml": "^2.1.3"
   }

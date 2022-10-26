@@ -1,6 +1,6 @@
-import fetch from "node-fetch"
+const fetch = import("node-fetch")
 
-export class Keycloak {
+class Keycloak {
     // keycloak class will serve as SDK for conducting operations within the keycloak deployment
     // keycloakHost should be the FQDN of the host and port ONLY, e.g., keycloak.example.com or keycloak.example.com:8080 -- should add handing to ensure that the class can handle either format and/or the url is in the right format.
     // keycloak does not provide a native way to grab API keys for their REST API- must use username and password authentication.
@@ -202,4 +202,6 @@ export class Keycloak {
         return data.access_token
     }
 }
+
+module.exports = Keycloak
 

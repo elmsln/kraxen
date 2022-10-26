@@ -1,13 +1,12 @@
-import * as fs from "node:fs"
-import { Buffer } from "node:buffer"
-import Ajv from "ajv"
-import fetch from "node-fetch"
-import { parse, stringify, YAMLError } from "yaml"
-import { writeFile } from "node:fs"
+const { fs } = require("node:fs")
+const { Buffer } = require("node:buffer")
+const { Ajv } = require("ajv")
+const { fetch } = import("node-fetch")
+const { parse, stringify, YAMLError } = require("yaml")
 
 const schemaLocation = 'https://raw.githubusercontent.com/elmsln/kraxen/main/keycloak-deploy.schema.json'
 
-export async function validateTemplate(template) {
+const validateTemplate = async function validateTemplate(template) {
     let res = await fetch(schemaLocation)
     const schema = await res.json()
 
@@ -16,16 +15,22 @@ export async function validateTemplate(template) {
     return validate(template)
 }
 
-export function parseTemplate(templatePath) {
+const parseTemplate = function parseTemplate(templatePath) {
     let template = fs.readFileSync(templatePath, 'utf8')
     return parse(template)
 }
 
-export function buildTemplate(values) {
+const buildTemplate = function buildTemplate(values) {
     // builds a yaml template based on CLI, save to filesystem.
     const template = stringify(values)  
     const data = new Uint8Array(Buffer.from(template))
-    writeFile('keycloak-client.template.yaml', data, (err) => {
+    fs.writeFile('keycloak-client.template.yaml', data, (err) => {
         if (err) throw err
     })
+}
+
+module.exports = {
+    validateTemplate,
+    parseTemplate,
+    buildTemplate
 }
