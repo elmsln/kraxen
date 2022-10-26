@@ -12,6 +12,7 @@ export class Keycloak {
     #keycloakToken
     #keycloakRefreshToken
 
+    //update with optional parameters
     constructor(keycloakRealm, {keycloakHost, keycloakUsername, keycloakPassword} ) {
         try {
             if (keycloakHost){
@@ -50,6 +51,10 @@ export class Keycloak {
         const httpMethod = 'GET'
 
         let res = await fetch(endpointUrl, {method: httpMethod, headers: {"Authorization": `bearer ${token}`}})
+        if (res.status == 403){
+            let newToken = this.#refreshToken(this.#keycloakRefreshToken, this.#keycloakHost)
+            res = await fetch(endpointUrl, {method: httpMethod, headers: {"Authorization": `bearer ${newToken}`}})
+        }
         if (!res.ok){
             let message = await res.text()
             throw new Error('Could not complete keycloak request: ' + message)
@@ -93,7 +98,7 @@ export class Keycloak {
     async createClient(clientConfiguration){
         const token = await this.#initTokens()
         const endpointUrl = `https://${this.#keycloakHost}/admin/realms/${this.#keycloakRealm}/clients/`
-        const httpMethod = 'PUT'
+        const httpMethod = 'POST'
         const formBody = this.#encodeBody(clientConfiguration)
 
         let res = await fetch(endpointUrl, {method: httpMethod, headers: {"Authorization": `bearer ${token}`, "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"}, body: formBody})
@@ -107,6 +112,7 @@ export class Keycloak {
     }
 
     // Update the configuration for a keycloak client
+    // Note, the clientID is the ID of the client (uuid) not the standard ClientId value
     async updateClient(clientId, clientConfiguration){
         const token = await this.#initTokens()
         const endpointUrl = `https://${this.#keycloakHost}/admin/realms/${this.#keycloakRealm}/clients/${clientId}`
