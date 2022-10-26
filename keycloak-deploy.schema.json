@@ -12,7 +12,7 @@
       "items": { "$ref": "#/$defs/role" }
     }
   },
-  "required": ["keycloak", "client"],
+  "required": ["client"],
   "$defs": {
     "keycloak": {
       "type": "object",
@@ -21,13 +21,9 @@
         "hostname": {
           "type": "string",
           "description": ""
-        },
-        "api-key": {
-          "type": "string",
-          "description": ""
         }
       },
-      "required": ["hostname", "api-key"]
+      "required": ["hostname"]
     },
     "client": {
       "type": "object",
