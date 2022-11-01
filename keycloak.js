@@ -1,6 +1,6 @@
-const fetch = import("node-fetch")
+import fetch from "node-fetch"
 
-class Keycloak {
+export class Keycloak {
     // keycloak class will serve as SDK for conducting operations within the keycloak deployment
     // keycloakHost should be the FQDN of the host and port ONLY, e.g., keycloak.example.com or keycloak.example.com:8080 -- should add handing to ensure that the class can handle either format and/or the url is in the right format.
     // keycloak does not provide a native way to grab API keys for their REST API- must use username and password authentication.
@@ -112,7 +112,7 @@ class Keycloak {
     }
 
     // Update the configuration for a keycloak client
-    // Note, the clientID is the ID of the client (uuid) not the standard ClientId value
+    // Note, the clientID is the ID of the client (uuid) not the standard ClientId
     async updateClient(clientId, clientConfiguration){
         const token = await this.#initTokens()
         const endpointUrl = `https://${this.#keycloakHost}/admin/realms/${this.#keycloakRealm}/clients/${clientId}`
@@ -202,6 +202,4 @@ class Keycloak {
         return data.access_token
     }
 }
-
-module.exports = Keycloak
 
