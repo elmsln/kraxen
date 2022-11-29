@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Keycloak client deployment engine",
   "main": "index.js",
+  "bin": {
+    "kraxen": "index.js"
+  },
   "scripts": {
     "start": "",
     "test": "echo \"Error: no test specified\" && exit 1"
