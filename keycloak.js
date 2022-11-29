@@ -13,29 +13,30 @@ export class Keycloak {
     #keycloakRefreshToken
 
     //update with optional parameters
-    constructor(keycloakRealm, {keycloakHost, keycloakUsername, keycloakPassword} ) {
+    constructor(keycloakRealm = null, keycloakHost = null, keycloakUsername = null, keycloakPassword = null ) {
         try {
-            if (keycloakHost){
+            if (keycloakHost != null){
                 this.#keycloakHost = keycloakHost
             } else {
-                this.#keycloakHost = process.env('KEYCLOAK_HOST')
+                this.#keycloakHost = process.env.KEYCLOAK_HOST
             }
-            if (keycloakUsername){ // change to username and password
+            if (keycloakUsername != null){ // change to username and password
                 this.#keycloakAdminUsername = keycloakUsername
             } else {
-                this.#keycloakAdminUsername = process.env('KEYCLOAK_ADMIN_USERNAME')
+                this.#keycloakAdminUsername = process.env.KEYCLOAK_ADMIN_USERNAME
             }
-            if (keycloakPassword) {
+            if (keycloakPassword != null) {
                 this.#keycloakAdminPassword = keycloakPassword
             } else {
-                this.#keycloakAdminPassword = process.env('KEYCLOAK_ADMIN_PASSWORD')
+                this.#keycloakAdminPassword = process.env.KEYCLOAK_ADMIN_PASSWORD
             }
-            if (keycloakRealm){
+            if (keycloakRealm != null){
                 this.#keycloakRealm = keycloakRealm
             } else {
-                this.#keycloakRealm = process.env('KEYCLOAK_REALM')
+                this.#keycloakRealm = process.env.KEYCLOAK_REALM
             }
         } catch (error) {
+            console.error(error)
             console.error("ERROR: Must specifiy keycloak configuration in object declaration or environment variables.")
             process.exit(1)
         }
@@ -99,16 +100,15 @@ export class Keycloak {
         const token = await this.#initTokens()
         const endpointUrl = `https://${this.#keycloakHost}/admin/realms/${this.#keycloakRealm}/clients/`
         const httpMethod = 'POST'
-        const formBody = this.#encodeBody(clientConfiguration)
+        const clientBody = JSON.stringify(clientConfiguration)
 
-        let res = await fetch(endpointUrl, {method: httpMethod, headers: {"Authorization": `bearer ${token}`, "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"}, body: formBody})
+        let res = await fetch(endpointUrl, {method: httpMethod, headers: {"Authorization": `bearer ${token}`, "Content-Type": "application/json"}, body: clientBody})
         if (!res.ok){
             let message = await res.text()
-            throw new Error('Could not complete keycloak request: ' + message)
+            throw new Error('Could not complete keycloak request: (Error ' + res.status + ') ' + message)
         }
-        let data = await res.json()
-        //return data
-        console.log(data)
+        console.log(res.status)
+        return res.status
     }
 
     // Update the configuration for a keycloak client
@@ -117,16 +117,14 @@ export class Keycloak {
         const token = await this.#initTokens()
         const endpointUrl = `https://${this.#keycloakHost}/admin/realms/${this.#keycloakRealm}/clients/${clientId}`
         const httpMethod = 'PUT'
-        const formBody = this.#encodeBody(clientConfiguration)
+        const clientBody = JSON.stringify(clientConfiguration)
 
-        let res = await fetch(endpointUrl, {method: httpMethod, headers: {"Authorization": `bearer ${token}`, "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"}, body: formBody})
+        let res = await fetch(endpointUrl, {method: httpMethod, headers: {"Authorization": `bearer ${token}`, "Content-Type": "application/json"}, body: clientBody})
         if (!res.ok){
             let message = await res.text()
             throw new Error('Could not complete keycloak request: ' + message)
         }
-        let data = await res.json()
-        //return data
-        console.log(data)
+        return res.status
     }
 
     // Encodes objects in the appropriate body format

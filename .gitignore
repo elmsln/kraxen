@@ -131,3 +131,5 @@ dist
 
 # Testing files
 test-index.js
+.supported-fields
+sample-client.js

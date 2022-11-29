@@ -8,7 +8,7 @@
     "client": { "$ref": "#/$defs/client" },
     "roles": {
       "type": "array",
-      "description": "",
+      "description": "Roles to be created with the client.",
       "items": { "$ref": "#/$defs/role" }
     }
   },
@@ -16,42 +16,42 @@
   "$defs": {
     "keycloak": {
       "type": "object",
-      "description": "",
+      "description": "General Keycloak Configuration",
       "properties": {
         "hostname": {
           "type": "string",
-          "description": ""
-        }
-      },
-      "required": ["hostname"]
-    },
-    "client": {
-      "type": "object",
-      "description": "",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": ""
-        },
-        "id": {
-          "type": "string",
-          "description": ""
-        },
-        "type": {
-          "type": "string",
-          "description": ""
+          "description": "Specifies the FQDN of the keycloak host."
         },
         "realm": {
           "type": "string",
-          "description": ""
+          "description": "Specifies the realm where the client will be created."
+        }
+      },
+      "required": ["realm"]
+    },
+    "client": {
+      "type": "object",
+      "description": "General specification for the client.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Specifies display name of the client. For example 'My Client'."
+        },
+        "clientId": {
+          "type": "string",
+          "description": "Specifies ID referenced in URI and tokens. For example 'my-client'."
+        },
+        "protocol": {
+          "type": "string",
+          "description": "Specifies whether to use Open ID Connect or SAML for the client. Value must be 'openid-connect', or 'saml'"
         },
         "description": {
           "type": "string",
-          "description": ""
+          "description": "Human readable summary of the client"
         },
-        "redirect-urls": {
-          "type": "array",
-          "description": ""
+        "alwaysDisplayInConsole": {
+          "type": "boolean",
+          "description": "Whether to consistently display the client in the Keycloak admin console"
         },
         "oidc": { "$ref": "#/$defs/oidc" },
         "access": { "$ref": "#/$defs/access" },
@@ -59,30 +59,37 @@
         "logout": { "$ref": "#/$defs/logout" },
         "scopes": {
           "type": "array",
-          "items": { "$ref": "#/$defs/scope" },
+          "items": { "$ref": "#/$defs/scopes" },
           "description": ""
         }
       },
-      "required": ["id", "type", "realm"]
+      "required": ["clientId", "protocol"]
     },
     "oidc": {
       "type": "object",
-      "description": "",
+      "description": "Configuration for the OIDC protocol.",
       "properties": {
-        "client-authentication": {
+        "publicClient": {
           "type": "boolean",
-          "description": ""
+          "description": "Defines the type of the OIDC client. When it's 'true', the OIDC type is set to confidential access type. When it's 'false', it is set to public access type."
         },
-        "authorization": {
+        "authorizationServicesEnabled": {
           "type": "boolean",
-          "description": ""
+          "description": "Enable/Disable fine-grained authorization support for a client."
         },
-        "authentication-flow": {
+        "authenticationFlow": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "description": ""
+          "description": "??see below"
+        },
+        "authenticationFlowBindingOverrides": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The selected OIDC Authentication Flow type."
         }
       }
     },
@@ -90,38 +97,43 @@
       "type": "object",
       "description": "",
       "properties": {
-        "root-url": {
-          "type": "string",
-          "description": ""
+        "standardFlowEnabled": {
+          "type": "boolean",
+          "description": "If true, clients are allowed to use the OIDC Authorization Code Flow."
         },
-        "home-url": {
-          "type": "string",
-          "description": ""
+        "implicitFlowEnabled": {
+          "type": "boolean",
+          "description": "If true, clients are allowed to use the OIDC Implicit Flow."
         },
-        "redirect-uris": {
+        "directAccessGrantsEnabled": {
+          "type": "boolean",
+          "description": "If true, clients are allowed to use OIDC Direct Grants"
+        },
+        "rootUrl": {
+          "type": "string",
+          "description": "Root URL appended to relative URLs."
+        },
+        "baseUrl": {
+          "type": "string",
+          "description": "Default URL to use when the auth server needs to redirect or link back to the client."
+        },
+        "redirectUris": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "description": ""
+          "description": "Valid URI pattern a browser can redirect to after a successful login. Wildcards and relative paths may be used."
         },
-        "logout-redirect-uris": {
+        "webOrigins": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "description": ""
+          "description": "Allowed CORS origins. To permit all origins of Redirect URIs, add '+'."
         },
-        "web-origins": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": ""
-        },
-        "admin-url": {
+        "adminUrl": {
           "type": "string",
-          "description": ""
+          "description": "URL to the admin interface of the client. Set this if the client supports the adapter REST API."
         }
       }
     },
@@ -129,21 +141,17 @@
       "type": "object",
       "description": "",
       "properties": {
-        "theme": {
-          "type": "string",
-          "description": ""
-        },
-        "consent": {
+        "consentRequired": {
           "type": "boolean",
-          "description": ""
+          "description": "If enabled, users have to consent to client access."
         },
         "display-client": {
           "type": "boolean",
-          "description": ""
+          "description": "??Applicable only if 'consent' is defined for this client. If 'true', there will be an item on the consent screen about this client itself."
         },
         "consent-text": {
           "type": "string",
-          "description": ""
+          "description": "??Applicable only if 'display-client' is 'true' for this client. Contains the text which will be on the consent screen about permissions for this client."
         }
       }
     },
@@ -151,53 +159,51 @@
       "type": "object",
       "description": "",
       "properties": {
-        "front-channel": {
+        "frontchannelLogout": {
           "type": "boolean",
-          "description": ""
-        },
-        "front-channel-url": {
-          "type": "string",
-          "description": ""
-        },
-        "back-channel-url": {
-          "type": "string",
-          "description": ""
-        },
-        "back-channel-session": {
-          "type": "boolean",
-          "description": ""
-        },
-        "back-channel-revoke": {
-          "type": "boolean",
-          "description": ""
+          "description": "If 'true', logout requires a browser redirect to client. If 'false', server performs a background invocation for logout."
         }
       }
     },
-    "scope": {
+    "scopes": {
       "type": "object",
-      "description": "",
+      "description": "Client-Role mappings that the client will use.",
       "properties": {
-        "name": {
-          "type": "string",
-          "description": ""
+        "fullScopeAllowed": {
+          "type": "boolean",
+          "description": "Specifies that the effective roles of the scope are every declared role in the realm."
         },
-        "assigned-type": {
-          "type": "string",
-          "description": ""
+        "defaultClientScopes": {
+          "type": "array",
+          "description": "Specifies the default Client Scopes",
+          "items": {
+            "type": "string"
+          }
+        },
+        "optionalClientScopes": {
+          "type": "array",
+          "description": "Specifies the optional client scopes",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
     "role": {
       "type": "object",
-      "description": "",
+      "description": "Description of a Keycloak Role",
       "properties": {
         "name": {
           "type": "string",
-          "description": ""
+          "description": "Name of the role being created"
+        },
+        "clientRole": {
+          "type": "boolean",
+          "description": "Whether the role is a Client Role"
         },
         "description": {
           "type": "string",
-          "description": ""
+          "description": "Brief description of the role"
         }
       }
     }

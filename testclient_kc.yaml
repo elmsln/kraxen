@@ -1,0 +1,14 @@
+keycloak:
+  realm: Testing
+client:
+  name: Keycloak Test Website
+  description: description!
+  clientId: testclient004
+  protocol: openid-connect
+  access:
+    rootUrl: https://www.keycloak.org/app
+    redirectUris:
+      - /*
+    webOrigins:
+      - https://www.keycloak.org
+  
