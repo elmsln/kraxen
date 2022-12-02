@@ -107,7 +107,6 @@ export class Keycloak {
             let message = await res.text()
             throw new Error('Could not complete keycloak request: (Error ' + res.status + ') ' + message)
         }
-        console.log(res.status)
         return res.status
     }
 

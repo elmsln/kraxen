@@ -17,9 +17,11 @@ const args = parser.parse_args()
 
 // For config-- check if dotenv exists- if not, use env vars. If errors, alert in CLI.
 // Get user information
+// TODO: Add way to pass in dotenv (maybe .kconfig)
 dotenv.config()
 
 // Get template path and parse template
+// TODO: Check that path actually exists and inst fake
 if ('template' in args){
     const templatePath = args.template
     const templateData = parseTemplate(templatePath)
